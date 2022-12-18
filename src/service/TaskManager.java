@@ -19,22 +19,22 @@ public interface TaskManager {
 
     //Получение по идентификатору:
     Task getTaskId(int id);
-    Epic getEpicId();
-    SubTask getEpicId(int id);
+    Epic getEpicId(int id);
+    SubTask getSubTaskId(int id);
 
     //Создание. Сам объект должен передаваться в качестве параметра:
-    void createNewTask(Task task); // или int?
-    void createNewEpic(Epic epic);
-    void createNewSubTask(SubTask subTask);
+    void addNewTask(Task task);
+    void addNewEpic(Epic epic);
+    void addNewSubTask(SubTask subTask);
 
-    //Создание. Сам объект должен передаваться в качестве параметра:
+    //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     void updateTask(Task task);
     void updateEpic(Epic epic);
     void updateSubtask(SubTask subTask);
     //Удаление по идентификатору. - remove:
-    void deleteTaskById(int id);
-    void deleteEpic(int id);
-    void deleteSubTask(int id);
+    void deleteTaskById(Integer id);
+    void deleteEpic(Integer id);
+    void deleteSubTask(Integer id);
 
     //Получение списка всех подзадач определённого эпика:
     List<Task> getAllSubtasks(Epic epic);

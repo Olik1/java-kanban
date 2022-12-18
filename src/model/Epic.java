@@ -6,10 +6,10 @@ import java.util.Objects;
 
 public class Epic extends Task {
 
-    protected List<Integer> subTasks;
+    protected List<Integer> subTasks; //храним идентификаторы сабтасков
 
-    public Epic(String name, String description, Status status) {
-        super(name, description, status);
+    public Epic(String name, String description) {
+        super(name, description);
         subTasks = new ArrayList<>();
     }
 
@@ -43,11 +43,11 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", status=" + status +
-                ", description='" + description + '\'' +
-                '}';
+        return "Epic " +
+                " subTasks = " + subTasks +
+                " , name = '" + name + '\'' +
+                ", description = '" + description + '\'' +
+                ", id = " + id +
+                ", status = " + status;
     }
 }
