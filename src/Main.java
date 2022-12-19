@@ -1,13 +1,13 @@
 import model.Epic;
 import model.Status;
 import model.SubTask;
-import service.Manager;
+import service.TaskManagerImpl;
 
 public class Main {
 
     public static void main(String[] args) {
 //        Task task = new Task("Задача 1", "медведь 1", Status.NEW);
-        Manager manager = new Manager();
+        TaskManagerImpl manager = new TaskManagerImpl();
 //        manager.addNewTask(task);
 //        System.out.println(manager.getTaskId(1));
 //        //manager.clearAllTasks();
