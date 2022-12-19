@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Epic extends Task {
 
-    protected List<Integer> subTasks; //храним идентификаторы сабтасков
+    protected List<Integer> subTasks;
 
     public Epic(String name, String description) {
         super(name, description);

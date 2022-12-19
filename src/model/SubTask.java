@@ -3,7 +3,7 @@ package model;
 import java.util.Objects;
 
 public class SubTask extends Task {
-    protected int epicId; //храним идентификатор эпика
+    protected int epicId;
 
     public SubTask(String name, String description, Status status, int epicId) {
         super(name, description, status);

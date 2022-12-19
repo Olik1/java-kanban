@@ -19,7 +19,6 @@ public class TaskManagerImpl implements TaskManager {
         return ++nextId;
     }
 
-    //Получение списка всех задач:
     @Override
     public List<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
@@ -56,7 +55,6 @@ public class TaskManagerImpl implements TaskManager {
         }
     }
 
-    //Получение по идентификатору:
     @Override
     public Task getTaskId(int id) {
         return tasks.get(id);
@@ -72,23 +70,15 @@ public class TaskManagerImpl implements TaskManager {
         return subTasks.get(id);
     }
 
-    //обновление статуса
     private void setStatusForEpic(Epic epic) {
-/*    1) просто присваиваем NEW в надежде, что мы не пойдем ни в какой цикл и ничего не поменяется.
-      2) на самой первой итерации присваиваем эпику значение первого сабтаска.
-      Тогда если в ходе обхода сабтасков новых статусов не обнаружится, то в эпике будет правильный статус всех сабтасков
-      3) если в ходе обхода мы обнаружим разницу между статусом, который присвоен эпику (из первого сабтаска)
-      и текущим обрабатываемым сабтаском, тогда можно сразу поставить IN_PROGRESS и выходить из цикла
- */
         epic.setStatus(Status.NEW);
         boolean isCheckValue = false;
         for (Integer subId : epic.getSubTasks()) {
             SubTask subtask = getSubTaskId(subId);
             if (isCheckValue == false) {
-                //присваиваем первому сабтаску из эпика значение текущего сабтаска в цикле
                 epic.setStatus(subtask.getStatus());
-                isCheckValue = true; // меняем флаг чтобы больше статус первого сабтаска больше не присваивался
-            } //если у нас есть разница то все сабтаски в процессе и выходим из метода
+                isCheckValue = true;
+            }
             if (epic.getStatus() != subtask.getStatus()) {
                 epic.setStatus(Status.IN_PROGRESS);
                 return;
@@ -96,7 +86,6 @@ public class TaskManagerImpl implements TaskManager {
         }
     }
 
-    //Создание. Сам объект должен передаваться в качестве параметра:
     @Override
     public void addNewTask(Task task) {
         task.setId(increaseId());
@@ -114,13 +103,6 @@ public class TaskManagerImpl implements TaskManager {
 
     @Override
     public void addNewSubTask(SubTask subTask) {
-        /*не забываем подзадачи связаны с эпиком
-        на вход подаем объект SubTask, проверка на наличие ключа чтобы избежать null
-        вносим айди в список родительского эпика
-        потом загружаем ее в общий список задач и список подзадач.
-        Обновляем статус родителя
-        если задача не найдена - пишем пользователю - задача не найдена
-        */
         if (!epics.containsKey(subTask.getEpicId())) {
             return;
         }
@@ -131,7 +113,6 @@ public class TaskManagerImpl implements TaskManager {
         setStatusForEpic(epic);
     }
 
-    //Обновление. Новая версия объекта с верным идентификатором передаётся в виде параметра.
     @Override
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
@@ -164,7 +145,6 @@ public class TaskManagerImpl implements TaskManager {
         }
     }
 
-    //Удаление по идентификатору.
     @Override
     public void deleteTaskById(Integer id) {
         if (tasks.containsKey(id)) {
@@ -192,7 +172,6 @@ public class TaskManagerImpl implements TaskManager {
 
     }
 
-    //Получение списка всех подзадач определённого эпика.
     @Override
     public List<Task> getAllSubtasksByEpic(Epic epic) {
         ArrayList<Task> spisok = new ArrayList<>();
