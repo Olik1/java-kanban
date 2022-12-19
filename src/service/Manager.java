@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Manager implements TaskManager {
-    int newId;
+    int nextId;
     HashMap<Integer, Task> tasks = new HashMap<>();
     HashMap<Integer, Epic> epics = new HashMap<>();
     HashMap<Integer, SubTask> subTasks = new HashMap<>();
 
     private int increaseId() {
-        return ++newId;
+        return ++nextId;
     }
 
     //Получение списка всех задач:
@@ -81,13 +81,13 @@ public class Manager implements TaskManager {
       и текущим обрабатываемым сабтаском, тогда можно сразу поставить IN_PROGRESS и выходить из цикла
  */
         epic.setStatus(Status.NEW);
-        boolean check = false;
+        boolean isCheckValue = false;
         for (Integer subId : epic.getSubTasks()) {
             SubTask subtask = getSubTaskId(subId);
-            if (check == false) {
+            if (isCheckValue == false) {
                 //присваиваем первому сабтаску из эпика значение текущего сабтаска в цикле
                 epic.setStatus(subtask.getStatus());
-                check = true; // меняем флаг чтобы больше статус первого сабтаска больше не присваивался
+                isCheckValue = true; // меняем флаг чтобы больше статус первого сабтаска больше не присваивался
             } //если у нас есть разница то все сабтаски в процессе и выходим из метода
             if (epic.getStatus() != subtask.getStatus()) {
                 epic.setStatus(Status.IN_PROGRESS);
@@ -101,15 +101,15 @@ public class Manager implements TaskManager {
     public void addNewTask(Task task) {
         task.setId(increaseId());
         task.setStatus(Status.NEW);
-        tasks.put(newId, task);
+        tasks.put(nextId, task);
 
     }
 
     @Override
     public void addNewEpic(Epic epic) {
         epic.setId(increaseId());
-        epics.put(newId, epic);
         setStatusForEpic(epic);
+        epics.put(nextId, epic);
     }
 
     @Override
@@ -125,9 +125,9 @@ public class Manager implements TaskManager {
             return;
         }
         subTask.setId(increaseId());
-        subTasks.put(newId, subTask);
+        subTasks.put(nextId, subTask);
         Epic epic = getEpicId(subTask.getEpicId());
-        epic.getSubTasks().add(newId);
+        epic.getSubTasks().add(nextId);
         setStatusForEpic(epic);
     }
 
@@ -164,24 +164,37 @@ public class Manager implements TaskManager {
         }
     }
 
+    //Удаление по идентификатору.
     @Override
     public void deleteTaskById(Integer id) {
-        tasks.remove(id);
+        if (tasks.containsKey(id)) {
+            tasks.remove(id);
+        }
     }
 
     @Override
     public void deleteEpic(Integer id) {
+        Epic epic = epics.get(id);
+        for (Integer subTask : epic.getSubTasks()) {
+            subTasks.remove(subTask);
+
+        }
         epics.remove(id);
-        //добавить метод по удалению сабтасков
     }
 
     @Override
     public void deleteSubTask(Integer id) {
+        Epic epic = epics.get(id);
+        SubTask subTask = subTasks.get(id);
+        epic.getSubTasks().remove(subTask.getId());
+        setStatusForEpic(epic);
         subTasks.remove(id);
+
     }
 
+    //Получение списка всех подзадач определённого эпика.
     @Override
-    public List<Task> getAllSubtasks(Epic epic) {
+    public List<Task> getAllSubtasksByEpic(Epic epic) {
         ArrayList<Task> spisok = new ArrayList<>();
         for (Integer id : epic.getSubTasks()) {
             SubTask subTask = getSubTaskId(id);

@@ -37,6 +37,6 @@ public interface TaskManager {
     void deleteSubTask(Integer id);
 
     //Получение списка всех подзадач определённого эпика:
-    List<Task> getAllSubtasks(Epic epic);
+    List<Task> getAllSubtasksByEpic(Epic epic);
 
 }

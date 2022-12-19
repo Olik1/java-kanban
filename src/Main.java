@@ -23,23 +23,30 @@ public class Main {
 //        manager.clearAllEpics();
 //        manager.deleteEpic(1);
         Epic epic = new Epic("Эпик1", "побороть медведя");
+        Epic epic1 = new Epic("ТЗ-3", "надо доделать, нельзя тянуть");
         manager.addNewEpic(epic);
+        manager.addNewEpic(epic1);
         SubTask subTask = new SubTask("Подзадача 1.1.", "Обязательно выполнить",
                 Status.NEW, 1);
-//        SubTask subTask1 = new SubTask("Подзадача 1.2.", "Обязательно выполнить",
-//                Status.NEW, 1);
+        SubTask subTask2 = new SubTask("Подзадача 1.1.", "Обязательно выполнить",
+                Status.NEW, 1);
+        SubTask subTask3 = new SubTask("Подзадача 1.2.", "Обязательно выполнить",
+                Status.NEW, 2);
         manager.addNewSubTask(subTask);
-//        manager.addNewSubTask(subTask1);
-        System.out.println(manager.getEpicId(1));
-//        System.out.println(manager.getAllSubtasks());
+        manager.addNewSubTask(subTask2);
+        manager.addNewSubTask(subTask3);
+        System.out.println("До удаления эпика 1: " + manager.getEpicId(1));
+        System.out.println(manager.getAllSubtasksByEpic(epic));
 //        System.out.println(manager.getSubTaskId(3));
-        System.out.println(manager.getAllSubtasks(epic));
-        SubTask subTask1 = new SubTask("Подзадача 1.3.", "Можно не выполнять",
-                Status.IN_PROGRESS, 1);
-        manager.updateSubtask(subTask1);
-        System.out.println(manager.getSubTaskId(2));
-
-
+//        System.out.println(manager.getAllSubtasks(epic));
+//        manager.updateEpic(epic);
+//        System.out.println(manager.getSubTaskId(2));
+//        System.out.println(manager.getAllSubtasks());
+        manager.deleteEpic(1);
+        System.out.println("После удаления эпика 1: " + manager.getEpicId(1));
+        System.out.println("После удаления эпика 1 сабтаски: " + manager.getAllSubtasksByEpic(epic));
+        System.out.println(manager.getAllEpics());
+        System.out.println(manager.getAllSubtasksByEpic(epic1));
 
     }
 }
@@ -48,8 +55,8 @@ public class Main {
 2.2 Удаление всех задач. - task(done), epic(done), subtask(not done, если удаляется эпик удаляем и сабтаски)
 2.3 Получение по идентификатору. - task(done), epic(done), subtask(done)
 2.4 Создание. - task(done), epic(done), subtask(done)
-2.5 Обновление. - task(done), epic(), subtask()
-2.6 Удаление по идентификатору. - task(done), epic(done), subtask()
+2.5 Обновление. - task(done), epic(done), subtask(done)
+2.6 Удаление по идентификатору. - task(done), epic(done), subtask(done)
 3.1 Получение списка всех подзадач определённого эпика. -  subtask(done)
 4.1
 4.2
