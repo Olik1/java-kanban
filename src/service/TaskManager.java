@@ -37,7 +37,6 @@ public interface TaskManager {
 
     void updateSubtask(SubTask subTask);
 
-    //Удаление по идентификатору. - remove:
     void deleteTaskById(Integer id);
 
     void deleteEpic(Integer id);
@@ -45,6 +44,7 @@ public interface TaskManager {
     void deleteSubTask(Integer id);
 
     List<Task> getAllSubtasksByEpic(Epic epic);
+
     List<Task> getHistory();
 
 }
