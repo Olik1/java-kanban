@@ -35,7 +35,6 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(subTasks.values());
     }
 
-    //Удаление всех задач. - clear:
     @Override
     public void clearAllTasks() {
         tasks.clear();
@@ -139,7 +138,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateSubtask(SubTask subTask) {
-        //проверка на null
         if (subTasks.containsKey(subTask.getId())) {
             Epic epic = epics.get(subTask.getEpicId());
             subTasks.put(subTask.getId(), subTask);
@@ -192,3 +190,4 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 }
+
