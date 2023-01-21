@@ -1,9 +1,12 @@
-package service;
+package service.impl;
 
 import model.Epic;
 import model.Status;
 import model.SubTask;
 import model.Task;
+import service.HistoryManager;
+import service.Managers;
+import service.TaskManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,6 +155,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
         }
+        historyManager.remove(id);
     }
 
     @Override
@@ -162,6 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         }
         epics.remove(id);
+        historyManager.remove(id);
     }
 
     @Override
@@ -171,7 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.getSubTasks().remove(subTask.getId());
         setStatusForEpic(epic);
         subTasks.remove(id);
-
+        historyManager.remove(id);
     }
 
     @Override
