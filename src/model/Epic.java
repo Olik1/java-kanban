@@ -13,7 +13,7 @@ public class Epic extends Task {
         subTasks = new ArrayList<>();
     }
 
-    public List<Integer>  getSubTasks() {
+    public List<Integer> getSubTasks() {
         return subTasks;
     }
 

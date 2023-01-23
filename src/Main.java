@@ -8,11 +8,10 @@ import service.TaskManager;
 import java.util.List;
 
 public class Main {
-    public static<E> String listToNiceString(List<E> list) //шаблонный метод для читаемого вывода
+    public static <E> String listToNiceString(List<E> list) //шаблонный метод для читаемого вывода
     {
         String ret = "\n[\n";
-        for(E task : list)
-        {
+        for (E task : list) {
             ret += "    ";
             ret += task;
             ret += "\n";
@@ -24,7 +23,7 @@ public class Main {
     public static void main(String[] args) {
 
         TaskManager taskManager = Managers.getDefault();
-        Task task1 = new Task("Одна задача",   "Замесить", Status.NEW);
+        Task task1 = new Task("Одна задача", "Замесить", Status.NEW);
         Task task2 = new Task("Другая задача", "Нарубить", Status.NEW);
 
         System.out.println("Добавляем задачки:");

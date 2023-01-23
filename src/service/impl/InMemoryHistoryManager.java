@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final Map<Integer, Node<Task>> memoryMap = new HashMap<>();
+    private final Map<Integer, Node> memoryMap = new HashMap<>();
     private Node head;
     private Node tail;
 
@@ -21,8 +21,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public List<Task> getTasks() {
         List<Task> listOfTask = new ArrayList<>();
-        Node<Task> node = head;
-        while (node != null) { //пока нода не пустая
+        Node node = head;
+        while (node != null) {
             listOfTask.add(node.data); //добавление данных этого узла в список
             node = node.next; //Следующий узел
         }
@@ -48,7 +48,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public void addLast(Task task) {
         final Node oldTail = tail;
-        //public Node(E data, Node<E> next, Node<E> prev)
         final Node newNode = new Node(task, null, oldTail);
         tail = newNode;
         memoryMap.put(task.getId(), newNode);
@@ -61,10 +60,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 
-    public void removeNode(Node<Task> node) {
+    public void removeNode(Node node) {
         if (node != null) {
-            final Node<Task> next = node.next;
-            final Node<Task> prev = node.prev;
+            final Node next = node.next;
+            final Node prev = node.prev;
             memoryMap.remove(node.data.getId());
             node.data = null;
             if (head == node && tail == node) {
@@ -88,12 +87,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     }
 
-    static class Node<E> {
-        private E data;
-        private Node<E> next;
-        private Node<E> prev;
+    static class Node {
+        private Task data;
+        private Node next;
+        private Node prev;
 
-        public Node(E data, Node<E> next, Node<E> prev) {
+        public Node(Task data, Node next, Node prev) {
             this.data = data;
             this.next = next;
             this.prev = prev;
