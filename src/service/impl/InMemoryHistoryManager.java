@@ -31,10 +31,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void addTask(Task task) {
-        if (memoryMap.containsKey(task.getId())) {
+        if (task != null) {
             remove(task.getId());
+            addLast(task);
         }
-        addLast(task);
     }
 
     @Override
@@ -50,7 +50,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         final Node oldTail = tail;
         final Node newNode = new Node(task, null, oldTail);
         tail = newNode;
-        memoryMap.put(task.getId(), newNode);
         if (oldTail == null) {
             head = newNode;
         } else {
@@ -65,18 +64,13 @@ public class InMemoryHistoryManager implements HistoryManager {
             final Node next = node.next;
             final Node prev = node.prev;
             memoryMap.remove(node.data.getId());
-            node.data = null;
             if (head == node && tail == node) {
-                //если нода пустая = null - то ничего вообще не делаем
                 head = null;
                 tail = null;
             } else if (head == node) {
-                //если нода = нода1 (она же голова), то теперь голова = нода2,
-                // ссылка на предыдущий элемент, у ноды2 удаляем, потому что она ссылалась на голову
                 head = next;
                 head.prev = null;
             } else if (tail == node) {
-                //та же схема с хвостом
                 tail = prev;
                 tail.next = null;
             } else {
@@ -84,7 +78,6 @@ public class InMemoryHistoryManager implements HistoryManager {
                 next.prev = prev;
             }
         }
-
     }
 
     static class Node {
