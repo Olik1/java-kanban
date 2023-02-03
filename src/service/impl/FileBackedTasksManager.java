@@ -1,13 +1,14 @@
 package service.impl;
 
-import model.Epic;
-import model.SubTask;
-import model.Task;
+import model.*;
+import service.HistoryManager;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) {
@@ -16,6 +17,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private final File file; //свойство в кот.хранится путь к файлу бэкапа
     private static final String CSV_PATH = "id,type,name,status,description,epic\n";
+
     // 1,TASK,Task1,NEW,Description task1,
     public FileBackedTasksManager(File file) {
         this.file = file;
@@ -46,29 +48,48 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
     }
-    /*
-Продумать логику и реализовать метод save().
-Метод должен сохранять в файл все внесенные в память таски, эпики и сабтаски, а также историю просмотра.
-Файл должен быть в формате CSV. Обычно разделителем выступает запятая.
-Но так как в описаниях задач могут быть запятые, лучше подобрать другой символ.
-Возможно, точка с запятой или знак возведения в степень («^»). Или какая-либо последовательность символов.
-Первая строка файла это заголовки столбцов. В них перечислены поля объектов-задач (тасков, эпиков, сабтасков).
-Перечислим все поля, которые нам понадобятся:
-a) id — идентификатор задачи.
-b) type — тип задачи: таск, эпик или сабтаск (нужно завести под тип задачи отдельный enum, см пункт 4).
-c) title — название задачи.
-d) extraInfo — подробное описание задачи.
-e) status — статус задачи (если статус эпика вычисляется на основе статусов сабтасков,
-нужно ли сохранять статус эпика? — продумать.
-Как вариант, сохранять статус эпика в файл, но при восстановлении данных в памяти из файла
-высчитывать статус эпика заново и сравнивать с записанным в файле статусом.
-При несовпадении выбрасывать исключение — продумать целесообразность).
-f) subTasksID — список идентификаторов сабтасков
-(это поле актуально только для эпиков, у других типов задач оно будет пустым).
-g) epicID — идентификатор родительского эпика (актуально только для сабтасков, у других типов задач оно будет пустым).
-Далее в файле идет пустая строка. Это разделитель между данными задач и списком истории просмотров.
-Следующая строка это перечисленные через разделитель идентификаторы просмотренных задач.
-     */
+
+    public static Task fromString(String value) {
+        int id;
+        String name;
+        Status status;
+        String description;
+        String[] parts = value.split(",");
+        id = Integer.parseInt(parts[0]);
+        name = parts[2];
+        status = Status.valueOf(parts[3]);
+        description = parts[4];
+        int epicId = Integer.parseInt(parts[5]);
+
+        switch (TaskType.valueOf(parts[1])) {
+            case TASK:
+                return new Task(id, name, status, description);
+            case EPIC:
+                return new Epic(id, name, status, description, new ArrayList<>());
+            case SUBTASK:
+                return new SubTask(id, name, status, description, epicId);
+            default: return null;
+        }
+    }
+    static String historyToString(HistoryManager manager) { //сохраняет историю в CSV
+        StringBuilder builder = new StringBuilder();
+        if (manager.getHistory().size() != 0) {
+            for (Task task : manager.getHistory()) {
+                builder.append(task.getId()).append(",");
+            }
+        }
+        return builder.toString();
+    }
+    //возвращает список ID задач истории
+    //восстанавливает менеджер истории из CSV, сохранять будем в loadFromFile
+    static List<Integer> historyFromString(String value) { //
+        List<Integer> list = new ArrayList<>();
+        String[] parts = value.split(",");
+        for (String line : parts) {
+            list.add(Integer.valueOf(line));
+        }
+        return list;
+    }
 
     @Override
     public void clearAllTasks() {
@@ -144,6 +165,7 @@ g) epicID — идентификатор родительского эпика (
         super.deleteSubTask(id);
         //save()
     }
+
     @Override
     public void addNewTask(Task task) {
         super.addNewTask(task);

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Task {
     protected static int counter = 1;// переменная для создания корректного айди
-    protected final int id = counter++;
+    protected int id = counter++;
     protected String name;
     protected String description;
     protected Status status;
@@ -20,6 +20,14 @@ public class Task {
     public Task(String name, String description, Status status) {
         this(name, description);
         this.status = status;
+    }
+
+    public Task(int id, String name, Status status, String description) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.description = description;
+
     }
 
     public int getId() {
@@ -52,11 +60,10 @@ public class Task {
 
     @Override
     public boolean equals(Object o) {
-        return this == o;
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Task task = (Task) o;
-//        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
     }
 
     @Override
