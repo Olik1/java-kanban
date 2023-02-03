@@ -42,6 +42,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 writer.write(toString(subTask));
             }
             writer.write("\n");
+            writer.write(historyToString(historyManager));
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка записи в файл");
@@ -94,94 +95,94 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void clearAllTasks() {
         super.clearAllTasks();
-        //save()
+        save();
     }
 
     @Override
     public void clearAllEpics() {
         super.clearAllEpics();
-        //save()
+        save();
     }
 
     @Override
     public void clearAllSubtasks() {
         super.clearAllSubtasks();
-        //save()
+        save();
     }
 
     @Override
     public Task getTaskId(int id) {
         Task task = super.getTaskId(id);
-        //save()
+        save();
         return task;
     }
 
     @Override
     public Epic getEpicId(int id) {
         Epic epic = super.getEpicId(id);
-        //save()
+        save();
         return epic;
     }
 
     @Override
     public SubTask getSubTaskId(int id) {
         SubTask subTask = super.getSubTaskId(id);
-        //save()
+        save();
         return subTask;
     }
 
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
-        //save()
+        save();
     }
 
     @Override
     public void updateEpic(Epic epic) {
         super.updateEpic(epic);
-        //save()
+        save();
     }
 
     @Override
     public void updateSubtask(SubTask subTask) {
         super.updateSubtask(subTask);
-        //save()
+        save();
     }
 
     @Override
     public void deleteTaskById(Integer id) {
         super.deleteTaskById(id);
-        //save()
+        save();
     }
 
     @Override
     public void deleteEpic(Integer id) {
         super.deleteEpic(id);
-        //save()
+        save();
     }
 
     @Override
     public void deleteSubTask(Integer id) {
         super.deleteSubTask(id);
-        //save()
+        save();
     }
 
     @Override
     public void addNewTask(Task task) {
         super.addNewTask(task);
-        //save()
+        save();
     }
 
     @Override
     public void addNewEpic(Epic epic) {
         super.addNewEpic(epic);
-        //save()
+        save();
     }
 
     @Override
     public void addNewSubTask(SubTask subTask) {
         super.addNewSubTask(subTask);
-        //save()
+        save();
     }
 
 }
