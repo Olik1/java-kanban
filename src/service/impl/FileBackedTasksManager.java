@@ -16,7 +16,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private final File file; //свойство в кот.хранится путь к файлу бэкапа
     private static final String CSV_PATH = "id,type,name,status,description,epic\n";
-
+    // 1,TASK,Task1,NEW,Description task1,
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
@@ -28,10 +28,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public void save() { //сохраняет текущее состояние менеджера в указанный файл.
-        //id,type,name,status,description,epic
-        // 1,TASK,Task1,NEW,Description task1,
         try (Writer writer = new FileWriter(file)) {
             writer.write(CSV_PATH);
+            for (Task task : tasks.values()) {
+                writer.write(toString(task));
+            }
+            for (Epic epic : epics.values()) {
+                writer.write(toString(epic));
+            }
+            for (SubTask subTask : subTasks.values()) {
+                writer.write(toString(subTask));
+            }
+            writer.write("\n");
 
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка записи в файл");
@@ -134,6 +142,23 @@ g) epicID — идентификатор родительского эпика (
     @Override
     public void deleteSubTask(Integer id) {
         super.deleteSubTask(id);
+        //save()
+    }
+    @Override
+    public void addNewTask(Task task) {
+        super.addNewTask(task);
+        //save()
+    }
+
+    @Override
+    public void addNewEpic(Epic epic) {
+        super.addNewEpic(epic);
+        //save()
+    }
+
+    @Override
+    public void addNewSubTask(SubTask subTask) {
+        super.addNewSubTask(subTask);
         //save()
     }
 
