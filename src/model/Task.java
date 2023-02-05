@@ -1,16 +1,14 @@
 package model;
 
-import service.TaskManager;
-
 import java.util.Objects;
 
 public class Task {
     protected static int counter = 1;// переменная для создания корректного айди
+    private final TaskType taskType = TaskType.TASK;
     protected int id = counter++;
     protected String name;
     protected String description;
     protected Status status;
-    protected TaskManager manager;
 
     public Task(String name, String description) {
         this.name = name;
@@ -24,10 +22,15 @@ public class Task {
 
     public Task(int id, String name, Status status, String description) {
         this.id = id;
+        if (counter <= id) counter = id++;
         this.name = name;
         this.status = status;
         this.description = description;
 
+    }
+
+    public TaskType getTaskType() {
+        return taskType;
     }
 
     public int getId() {
