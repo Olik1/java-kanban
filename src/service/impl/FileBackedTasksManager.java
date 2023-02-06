@@ -1,5 +1,6 @@
 package service.impl;
 
+import exeptions.ManagerSaveException;
 import model.*;
 import service.HistoryManager;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String CSV_PATH = "report.csv";
+    private final File file; //свойство в кот.хранится путь к файлу бэкапа
 
     public static void main(String[] args) {
 
@@ -37,12 +39,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     }
 
-    private final File file; //свойство в кот.хранится путь к файлу бэкапа
-
 
     public FileBackedTasksManager(File file) {
         this.file = file;
-        //loadFromFile(file);
     }
 
     public String toString(Task task) {
@@ -103,26 +102,32 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException exception) {
-            System.out.println("Ошибка считывания файла в loadFromFile");
+            throw new ManagerSaveException(exception.getMessage());
         }
         return fileBackedTasksManager;
     }
 
 
     public static Task fromString(String value) {
-        try {
 
-            int id;
-            String name;
-            Status status;
-            String description;
-            String[] parts = value.split(",");
-            id = Integer.parseInt(parts[0]);
-            name = parts[2];
-            status = Status.valueOf(parts[3]);
-            description = parts[4];
+        int id;
+        String name;
+        Status status;
+        String description;
+        String[] parts = value.split(",");
+        TaskType taskType;
+        if (parts.length >= 5) {
+            try {
+                id = Integer.parseInt(parts[0]);
+                name = parts[2];
+                status = Status.valueOf(parts[3]);
+                description = parts[4];
+                taskType = TaskType.valueOf(parts[1]);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
 
-            switch (TaskType.valueOf(parts[1])) {
+            switch (taskType) {
                 case TASK:
                     Task newTask = new Task(id, name, status, description);
                     return newTask;
@@ -136,13 +141,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 default:
                     return null;
             }
-        } catch (Exception e) {
-
         }
         return null;
     }
 
-    static String historyToString(HistoryManager manager) { //сохраняет историю в CSV
+
+    private static String historyToString(HistoryManager manager) { //сохраняет историю в CSV
         StringBuilder builder = new StringBuilder();
         if (manager.getHistory().size() != 0) {
             for (Task task : manager.getHistory()) {
@@ -260,7 +264,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-    public static <E> String listToNiceString(List<E> list) //шаблонный метод для читаемого вывода
+    private static <E> String listToNiceString(List<E> list) //шаблонный метод для читаемого вывода
     {
         String ret = "\n[\n";
         for (E task : list) {
