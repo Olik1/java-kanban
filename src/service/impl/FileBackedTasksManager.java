@@ -1,6 +1,7 @@
 package service.impl;
 
 import exeptions.ManagerLoadException;
+import exeptions.ManagerSaveException;
 import model.*;
 import service.HistoryManager;
 
@@ -67,8 +68,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             writer.write("\n");
             writer.write(historyToString(historyManager));
 
-        } catch (IOException e) {
-            throw new ManagerLoadException("Ошибка записи в файл");
+        } catch (IOException exception) {
+            throw new ManagerSaveException(exception.getMessage());
         }
     }
 
@@ -114,7 +115,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new ManagerLoadException(e.getMessage());
         }
         return fileBackedTasksManager;
     }
