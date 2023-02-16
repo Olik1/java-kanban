@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -12,6 +13,11 @@ public class SubTask extends Task {
 
     public SubTask(int id, String name, Status status, String description, int epicId) {
         super(id, name, status, description);
+        this.epicId = epicId;
+    }
+
+    public SubTask(int id, String name, Status status, String description, long duration, LocalDateTime startTime, int epicId) {
+        super(id, name, status, description, duration, startTime);
         this.epicId = epicId;
     }
 

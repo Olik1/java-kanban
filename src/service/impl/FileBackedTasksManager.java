@@ -6,13 +6,13 @@ import model.*;
 import service.HistoryManager;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String CSV_PATH = "report.csv";
     private final File file; //свойство в кот.хранится путь к файлу бэкапа
-
     public static void main(String[] args) {
 
         File fileForExample = new File(CSV_PATH);
@@ -21,8 +21,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(fileBackedTasksManager.getAllEpics());
         System.out.println(fileBackedTasksManager.getAllSubtasks());
         System.out.println(listToNiceString(fileBackedTasksManager.getHistory()));
-
+        //public Task(int id, String name, Status status, String description, long duration, LocalDateTime startTime)
         Task task = new Task("Olga", "funny", Status.NEW);
+        task.setDuration(14);
+        task.setStartTime(LocalDateTime.now());
         fileBackedTasksManager.addNewTask(task);
         Epic epic1 = new Epic("Приготовить хавчик", "сделать вкусно");
         Epic epic2 = new Epic("Помыть кота", "Погладить кота");
@@ -39,23 +41,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     }
-
-
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
 
-    public String toString(Task task) {
-        return String.format("%s,%s,%s,%s,%s,%s\n",
+    private String toString(Task task) { // Метод сохранения задачи в строку
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
                 task.getId(), task.getClass().getSimpleName().toUpperCase(),
                 task.getName(), task.getStatus(), task.getDescription(),
+                task.getDuration(), task.getStartTime(), task.getEndTime(),
                 task.getClass().getSimpleName().equals("SubTask") ?
                         Integer.toString(((SubTask) task).getEpicId()) : "");
     }
 
-    public void save() { //сохраняет текущее состояние менеджера в указанный файл.
+    private void save() { //сохраняет текущее состояние менеджера в указанный файл.
         try (Writer writer = new FileWriter(file)) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,duration,startTime,endTime,epicId\n");
             for (Task task : tasks.values()) {
                 writer.write(toString(task));
             }
@@ -120,29 +121,36 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return fileBackedTasksManager;
     }
 
-    public static Task fromString(String value) {
-
+    private static Task fromString(String value) { //создания задачи из строки
         int id;
         String name;
         Status status;
         String description;
         String[] parts = value.split(",");
         TaskType taskType;
+        //id,type,name,status,description,duration,startTime,endTime,epicId
         if (parts.length >= 5) {
             id = Integer.parseInt(parts[0]);
             name = parts[2];
             status = Status.valueOf(parts[3]);
             description = parts[4];
             taskType = TaskType.valueOf(parts[1]);
+            long duration = Long.parseLong(parts[5]);
+            LocalDateTime startTime;
+            try {
+                startTime = LocalDateTime.parse(parts[6]);
+            } catch (Exception ex) {
+                startTime = null;
+            }
 
             switch (taskType) {
                 case TASK:
-                    return new Task(id, name, status, description);
-                case EPIC:
+                    return new Task(id, name, status, description, duration, startTime);
+                case EPIC: //продолжительность эпика — сумма продолжительности всех его подзадач, нужно задавать?
                     return new Epic(id, name, status, description, new ArrayList<>());
                 case SUBTASK:
-                    int epicId = Integer.parseInt(parts[5]);
-                    return new SubTask(id, name, status, description, epicId);
+                    int epicId = Integer.parseInt(parts[8]);
+                    return new SubTask(id, name, status, description, duration, startTime, epicId);
                 default:
                     return null;
             }
@@ -163,7 +171,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //возвращает список ID задач истории
     //восстанавливает менеджер истории из CSV, сохранять будем в loadFromFile
-    static List<Integer> historyFromString(String value) { //
+    private static List<Integer> historyFromString(String value) { //
         List<Integer> list = new ArrayList<>();
         String[] parts = value.split(",");
         for (String line : parts) {

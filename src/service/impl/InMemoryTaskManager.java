@@ -8,15 +8,19 @@ import service.HistoryManager;
 import service.Managers;
 import service.TaskManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks = new HashMap<>();
     protected final HashMap<Integer, Epic> epics = new HashMap<>();
     protected final HashMap<Integer, SubTask> subTasks = new HashMap<>();
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected Set<Task> priorityTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime)); //хранение задач по приоритету
+
+    private List<Task> getPrioritizedTasks() { //возвращает список задач и подзадач в заданном порядке
+        return  priorityTasks.stream().collect(Collectors.toList());
+    }
 
     @Override
     public List<Task> getAllTasks() {
