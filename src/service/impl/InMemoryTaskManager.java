@@ -21,6 +21,29 @@ public class InMemoryTaskManager implements TaskManager {
     private List<Task> getPrioritizedTasks() { //возвращает список задач и подзадач в заданном порядке
         return  priorityTasks.stream().collect(Collectors.toList());
     }
+    private void addPrioritizedTasks(Task task) {
+        priorityTasks.add(task);
+    }
+    private boolean isAnyCrossingTask(Task task) {
+        if (getPrioritizedTasks().isEmpty()) {
+            return false;
+        }
+        if(task.getStartTime() == null) {
+            return false;
+        }
+        for (Task priorityTask : priorityTasks) {
+            if (priorityTask.getStartTime() == null || priorityTask.getEndTime() == null) {
+                continue;
+            }
+            if (task.getStartTime().isBefore(priorityTask.getEndTime())
+            && task.getStartTime().isAfter(priorityTask.getStartTime())
+            || (task.getEndTime().isAfter(priorityTask.getStartTime())
+            && task.getEndTime().isBefore(priorityTask.getEndTime()))) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public List<Task> getAllTasks() {
