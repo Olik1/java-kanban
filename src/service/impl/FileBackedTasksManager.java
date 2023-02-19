@@ -16,11 +16,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) {
 
         File fileForExample = new File(CSV_PATH);
-        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(fileForExample);
-        System.out.println(fileBackedTasksManager.getAllTasks());
-        System.out.println(fileBackedTasksManager.getAllEpics());
-        System.out.println(fileBackedTasksManager.getAllSubtasks());
-        System.out.println(listToNiceString(fileBackedTasksManager.getHistory()));
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(fileForExample);
+
         //public Task(int id, String name, Status status, String description, long duration, LocalDateTime startTime)
         Task task = new Task("Olga", "funny", Status.NEW);
         task.setDuration(14);
@@ -32,8 +29,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         fileBackedTasksManager.addNewEpic(epic2);
         SubTask subTask1 = new SubTask("Подзадача №3",
                 "побрить кота", Status.NEW, epic1.getId());
+        subTask1.setDuration(12);
+        subTask1.setStartTime(LocalDateTime.now().plusMinutes(50));
         fileBackedTasksManager.addNewSubTask(subTask1);
         fileBackedTasksManager.getTaskId(task.getId());
+        fileBackedTasksManager.getSubTaskId(epic1.getId());
+        System.out.println(listToNiceString(fileBackedTasksManager.getHistory()));
+
 
         fileBackedTasksManager.getSubTaskId(subTask1.getId());
         fileBackedTasksManager.getEpicId(epic1.getId());
@@ -46,10 +48,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private String toString(Task task) { // Метод сохранения задачи в строку
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s\n",
                 task.getId(), task.getClass().getSimpleName().toUpperCase(),
                 task.getName(), task.getStatus(), task.getDescription(),
-                task.getDuration(), task.getStartTime(), task.getEndTime(),
+                task.getDuration(), task.getStartTime(),
                 task.getClass().getSimpleName().equals("SubTask") ?
                         Integer.toString(((SubTask) task).getEpicId()) : "");
     }

@@ -1,5 +1,6 @@
 package service.impl;
 
+import exeptions.ManagerCrossingException;
 import model.Epic;
 import model.Status;
 import model.SubTask;
@@ -19,31 +20,48 @@ public class InMemoryTaskManager implements TaskManager {
     protected Set<Task> priorityTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime)); //хранение задач по приоритету
 
     private List<Task> getPrioritizedTasks() { //возвращает список задач и подзадач в заданном порядке
-        return  priorityTasks.stream().collect(Collectors.toList());
+        return priorityTasks.stream().collect(Collectors.toList());
     }
+
     private void addPrioritizedTasks(Task task) {
         priorityTasks.add(task);
     }
+
     private boolean isAnyCrossingTask(Task task) {
         if (getPrioritizedTasks().isEmpty()) {
             return false;
         }
-        if(task.getStartTime() == null) {
+        if (task.getStartTime() == null) {
             return false;
         }
         for (Task priorityTask : priorityTasks) {
             if (priorityTask.getStartTime() == null || priorityTask.getEndTime() == null) {
                 continue;
             }
-            if (task.getStartTime().isBefore(priorityTask.getEndTime())
-            && task.getStartTime().isAfter(priorityTask.getStartTime())
-            || (task.getEndTime().isAfter(priorityTask.getStartTime())
-            && task.getEndTime().isBefore(priorityTask.getEndTime()))) {
+
+            if (task.getStartTime().isAfter(priorityTask.getStartTime()) &&
+                    task.getStartTime().isBefore(priorityTask.getEndTime()) ||
+                    task.getEndTime().isAfter(priorityTask.getStartTime()) &&
+                            task.getEndTime().isBefore(priorityTask.getEndTime()) ||
+                    priorityTask.getStartTime().isAfter(task.getStartTime()) &&
+                            priorityTask.getStartTime().isBefore(task.getEndTime()) ||
+                    priorityTask.getEndTime().isAfter(task.getStartTime()) &&
+                            priorityTask.getEndTime().isBefore(task.getEndTime())
+            ) {
                 return true;
             }
         }
         return false;
     }
+    private void updateEpicDuration(Epic epic) {//добавляем в сабтаск
+        long duration = 0L;
+        for (Integer idSubTask : epic.getSubTasks()) {
+            SubTask subTask = subTasks.get(idSubTask);
+            duration += subTask.getDuration();
+        }
+        epic.setDuration(duration);
+    }
+
 
     @Override
     public List<Task> getAllTasks() {
@@ -126,9 +144,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewTask(Task task) {
+        if (isAnyCrossingTask(task)) {
+            throw new ManagerCrossingException();
+        }
         task.setStatus(Status.NEW);
         tasks.put(task.getId(), task);
-
+        addPrioritizedTasks(task);
     }
 
     @Override
@@ -139,6 +160,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addNewSubTask(SubTask subTask) {
+        if (isAnyCrossingTask(subTask)) {
+            throw new ManagerCrossingException();
+        }
         if (!epics.containsKey(subTask.getEpicId())) {
             return;
         }
@@ -146,6 +170,8 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = getEpicId(subTask.getEpicId());
         epic.getSubTasks().add(subTask.getId());
         setStatusForEpic(epic);
+        addPrioritizedTasks(subTask);
+        updateEpicDuration(epic);
     }
 
     @Override
