@@ -32,6 +32,14 @@ public class Task {
 
     }
 
+    public Task(String name, Status status, String description, long duration, LocalDateTime startTime) {
+        this.name = name;
+        this.status = status;
+        this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     public Task(int id, String name, Status status, String description, long duration, LocalDateTime startTime) {
         this.id = id;
         if (counter <= id) counter = id++;
@@ -43,6 +51,8 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() { //время завершения задачи
+        if (startTime == null)
+            return null;
         return startTime.plusMinutes(duration);
     }
 

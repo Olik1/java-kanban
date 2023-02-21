@@ -39,11 +39,12 @@ public interface TaskManager {
 
     void deleteTaskById(Integer id);
 
-    void deleteEpic(Integer id);
+    void deleteEpicById(Integer id);
 
-    void deleteSubTask(Integer id);
+    void deleteSubTaskById(Integer id);
 
     List<Task> getAllSubtasksByEpic(Epic epic);
 
     List<Task> getHistory();
+    List<Task> getPrioritizedTasks();
 }

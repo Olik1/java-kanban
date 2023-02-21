@@ -13,36 +13,7 @@ import java.util.List;
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final String CSV_PATH = "report.csv";
     private final File file; //свойство в кот.хранится путь к файлу бэкапа
-    public static void main(String[] args) {
 
-        File fileForExample = new File(CSV_PATH);
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(fileForExample);
-
-        //public Task(int id, String name, Status status, String description, long duration, LocalDateTime startTime)
-        Task task = new Task("Olga", "funny", Status.NEW);
-        task.setDuration(14);
-        task.setStartTime(LocalDateTime.now());
-        fileBackedTasksManager.addNewTask(task);
-        Epic epic1 = new Epic("Приготовить хавчик", "сделать вкусно");
-        Epic epic2 = new Epic("Помыть кота", "Погладить кота");
-        fileBackedTasksManager.addNewEpic(epic1);
-        fileBackedTasksManager.addNewEpic(epic2);
-        SubTask subTask1 = new SubTask("Подзадача №3",
-                "побрить кота", Status.NEW, epic1.getId());
-        subTask1.setDuration(12);
-        subTask1.setStartTime(LocalDateTime.now().plusMinutes(50));
-        fileBackedTasksManager.addNewSubTask(subTask1);
-        fileBackedTasksManager.getTaskId(task.getId());
-        fileBackedTasksManager.getSubTaskId(epic1.getId());
-        System.out.println(listToNiceString(fileBackedTasksManager.getHistory()));
-
-
-        fileBackedTasksManager.getSubTaskId(subTask1.getId());
-        fileBackedTasksManager.getEpicId(epic1.getId());
-        fileBackedTasksManager.getTaskId(task.getId());
-
-
-    }
     public FileBackedTasksManager(File file) {
         this.file = file;
     }
@@ -151,7 +122,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 case EPIC: //продолжительность эпика — сумма продолжительности всех его подзадач, нужно задавать?
                     return new Epic(id, name, status, description, new ArrayList<>());
                 case SUBTASK:
-                    int epicId = Integer.parseInt(parts[8]);
+                    int epicId = Integer.parseInt(parts[7]);
                     return new SubTask(id, name, status, description, duration, startTime, epicId);
                 default:
                     return null;
@@ -246,14 +217,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteEpic(Integer id) {
-        super.deleteEpic(id);
+    public void deleteEpicById(Integer id) {
+        super.deleteEpicById(id);
         save();
     }
 
     @Override
-    public void deleteSubTask(Integer id) {
-        super.deleteSubTask(id);
+    public void deleteSubTaskById(Integer id) {
+        super.deleteSubTaskById(id);
         save();
     }
 
