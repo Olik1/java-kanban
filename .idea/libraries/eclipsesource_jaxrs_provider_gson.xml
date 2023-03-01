@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="eclipsesource.jaxrs.provider.gson" type="repository">
+    <properties maven-id="com.eclipsesource.jaxrs:provider-gson:2.3" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/eclipsesource/jaxrs/provider-gson/2.3/provider-gson-2.3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/eclipsesource/jaxrs/jersey-all/2.18/jersey-all-2.18.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.3.1/gson-2.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

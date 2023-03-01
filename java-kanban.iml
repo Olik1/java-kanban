@@ -40,5 +40,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="eclipsesource.jaxrs.provider.gson" level="project" />
   </component>
 </module>
