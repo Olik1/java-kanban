@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import model.SubTask;
 import model.Task;
 import service.Managers;
 import service.TaskManager;
@@ -11,16 +12,13 @@ import service.TaskManager;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-public class TaskHandler implements HttpHandler {
+public class SubtaskHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager taskManager;
     private final Gson gson = Managers.getGson();
 
-    public TaskHandler(TaskManager taskManager) {
+    public SubtaskHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
     }
 
@@ -43,14 +41,14 @@ public class TaskHandler implements HttpHandler {
         switch (method) {
             case "GET": {
                 if (query == null) {
-                    String response = gson.toJson(taskManager.getAllTasks());
+                    String response = gson.toJson(taskManager.getAllSubtasks());
                     System.out.println("GET TASKS: " + response);
                     sendText(httpExchange, response);
                 } else {
                     String pathId = query.replaceFirst("id=", "");
                     int id = parsePathId(pathId);
                     if (id != -1) {
-                        String response = gson.toJson(taskManager.getTaskId(id));
+                        String response = gson.toJson(taskManager.getSubTaskId(id));
                         sendText(httpExchange, response);
                     } else {
                         System.out.println("Введен некорректный id" + pathId);
@@ -62,14 +60,14 @@ public class TaskHandler implements HttpHandler {
             case "POST": {
                 String request = readText(httpExchange);
                 try {
-                    Task task = gson.fromJson(request, Task.class);
+                    SubTask task = gson.fromJson(request, SubTask.class);
                     int id = task.getId();
-                    if (taskManager.getTaskId(id) != null) {
-                        taskManager.updateTask(task);
+                    if (taskManager.getSubTaskId(id) != null) {
+                        taskManager.updateSubtask(task);
                         httpExchange.sendResponseHeaders(200, 0);
                         System.out.println("Успешное обновление задачи по id " + id);
                     } else {
-                        taskManager.addNewTask(task);
+                        taskManager.addNewSubTask(task);
                         httpExchange.sendResponseHeaders(200, 0);
                         int taskId = task.getId();
                         System.out.println("Задача успешно добавлена по айди" + taskId);
@@ -83,14 +81,14 @@ public class TaskHandler implements HttpHandler {
             case "DELETE": {
                 if (query == null) {
                     // если у нас нет уточнения по айди в строке запроса, то удаляем все
-                    taskManager.clearAllTasks();
+                    taskManager.clearAllSubtasks();
                     httpExchange.sendResponseHeaders(200, 0);
                     System.out.println("Удаление всех задач прошло успешно");
                 } else {
                     String pathId = query.replaceFirst("id=", "");
                     int id = parsePathId(pathId);
                     if (id != -1) {
-                        taskManager.deleteTaskById(id);
+                        taskManager.deleteSubTaskById(id);
                         System.out.println("Задача с id " + id + " успешно удалена!");
                         httpExchange.sendResponseHeaders(200, 0);
                     } else {
