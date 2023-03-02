@@ -11,11 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private static final String CSV_PATH = "report.csv";
-    private final File file; //свойство в кот.хранится путь к файлу бэкапа
 
-    public FileBackedTasksManager(File file) {
-        this.file = file;
+    private String path;
+
+    public FileBackedTasksManager(String path) {
+        super();
+        this.path = path;
     }
 
     private String toString(Task task) { // Метод сохранения задачи в строку
@@ -28,7 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void save() { //сохраняет текущее состояние менеджера в указанный файл.
-        try (Writer writer = new FileWriter(file)) {
+        try (Writer writer = new FileWriter(path)) {
             writer.write("id,type,name,status,description,duration,startTime,endTime,epicId\n");
             for (Task task : tasks.values()) {
                 writer.write(toString(task));
@@ -49,7 +50,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //создает экземпляр менеджера на основе файла, считывает файл построчно и восстанавливает структуру заданий
     public static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file);
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(file.getPath());
         // Фйла может не быть при первом запуске программы.
         if (!file.exists()) return fileBackedTasksManager;
 

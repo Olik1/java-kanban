@@ -9,8 +9,7 @@ import java.net.URI;
 public class HttpTaskManager extends FileBackedTasksManager {
     KVTaskClient client;
     public HttpTaskManager(String url) throws IOException, InterruptedException {
-        //super(new File(url));
-        super(null);
+        super(url);
         client = new KVTaskClient(url);
 
 

@@ -16,7 +16,7 @@ public class FileTaskManagerTest extends TaskManagerTest {
 
     @BeforeEach
     public void beforeEach() {
-        manager = new FileBackedTasksManager(new File(FILE_NAME));
+        manager = new FileBackedTasksManager(FILE_NAME);
     }
 
     @DisplayName("Проверка загрузки файла и сравнение истории")
