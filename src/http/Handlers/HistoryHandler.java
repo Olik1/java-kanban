@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 public class HistoryHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -41,11 +43,10 @@ public class HistoryHandler implements HttpHandler {
         httpExchange.close();
     }
 
-    private void sendText(HttpExchange h, String text) throws IOException {
-        byte[] resp = text.getBytes(DEFAULT_CHARSET);
-        h.getResponseHeaders().add("Content-Type", "application/json");
-        h.sendResponseHeaders(200, resp.length);
-        h.getResponseBody().write(resp);
+    protected void sendText(HttpExchange exchange, String text) throws IOException {
+        byte[] resp = text.getBytes(UTF_8);
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.sendResponseHeaders(200, resp.length);
+        exchange.getResponseBody().write(resp);
     }
-
 }
