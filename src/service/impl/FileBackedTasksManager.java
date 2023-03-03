@@ -28,7 +28,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         Integer.toString(((SubTask) task).getEpicId()) : "");
     }
 
-    private void save() { //сохраняет текущее состояние менеджера в указанный файл.
+    protected void save() { //сохраняет текущее состояние менеджера в указанный файл.
         try (Writer writer = new FileWriter(path)) {
             writer.write("id,type,name,status,description,duration,startTime,endTime,epicId\n");
             for (Task task : tasks.values()) {
