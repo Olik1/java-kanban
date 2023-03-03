@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 public class Managers {
     public static TaskManager getTaskManagerDefault() {
         return FileBackedTasksManager.loadFromFile(new File("test_tasks.csv"));
-        // return new FileBackedTasksManager(new File("test_tasks.csv"));
     }
 
     public static HistoryManager getDefaultHistory() {
@@ -29,7 +28,7 @@ public class Managers {
 
     public static Gson getGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        //gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdater());
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdater());
         return gsonBuilder.setPrettyPrinting().create();
     }
 }

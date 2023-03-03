@@ -12,7 +12,5 @@ public class HttpTaskManager extends FileBackedTasksManager {
         super(url);
         client = new KVTaskClient(url);
 
-
-
     }
 }
