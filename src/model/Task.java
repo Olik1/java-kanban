@@ -5,7 +5,6 @@ import java.util.Objects;
 
 public class Task {
     protected static int counter = 1;// переменная для создания корректного айди
-    private final TaskType taskType = TaskType.TASK;
     protected int id = counter++;
     protected String name;
     protected String description;
@@ -72,10 +71,6 @@ public class Task {
         this.startTime = startTime;
     }
 
-    public TaskType getTaskType() {
-        return taskType;
-    }
-
     public int getId() {
         return id;
     }
@@ -109,14 +104,14 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && duration == task.duration && taskType == task.taskType
+        return id == task.id && duration == task.duration
                 && Objects.equals(name, task.name) && Objects.equals(description, task.description)
                 && status == task.status && Objects.equals(startTime, task.startTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskType, id, name, description, status, duration, startTime);
+        return Objects.hash(id, name, description, status, duration, startTime);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     }
 
-    //String load(String key) String Json to POJO -> fromJson(String json, Class<T> class)
+    //String load(String key) String Json to POJO -> fromJson(String json, Class<T> clasёs)
     public void loadFromKVServer() {
         //сначала выгружаем через KVTaskClient задачи
         String taskJson = client.load("tasks");

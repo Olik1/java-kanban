@@ -9,14 +9,11 @@ import service.Managers;
 import service.TaskManager;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class EpicHandler implements HttpHandler {
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private final TaskManager taskManager;
     private final Gson gson = Managers.getGson();
 
@@ -63,19 +60,19 @@ public class EpicHandler implements HttpHandler {
                 String request = readText(httpExchange);
                 try {
                     Epic epic = gson.fromJson(request, Epic.class);
-                    if (epic.getSubTasks() == null) {
-                        epic.setSubTasks(new ArrayList<>());
-                    }
                     int id = epic.getId();
                     if (taskManager.getEpicId(id) != null) {
                         taskManager.updateEpic(epic);
                         httpExchange.sendResponseHeaders(200, 0);
-                        System.out.println("Успешное обновление задачи по id " + id);
+                        System.out.println("Успешное обновление эпика по id " + id);
                     } else {
                         taskManager.addNewEpic(epic);
                         httpExchange.sendResponseHeaders(200, 0);
-                        int taskId = epic.getId();
-                        System.out.println("Задача успешно добавлена по айди" + taskId);
+                        int epicId = epic.getId();
+                        System.out.println("Эпик успешно добавлена по айди" + epicId);
+                    }
+                    if (epic.getSubTasks() == null) {
+                        epic.setSubTasks(new ArrayList<>());
                     }
                 } catch (JsonSyntaxException ex) {
                     httpExchange.sendResponseHeaders(400,0);
@@ -88,13 +85,13 @@ public class EpicHandler implements HttpHandler {
                     // если у нас нет уточнения по айди в строке запроса, то удаляем все
                     taskManager.clearAllEpics();
                     httpExchange.sendResponseHeaders(200, 0);
-                    System.out.println("Удаление всех задач прошло успешно");
+                    System.out.println("Удаление всех эпиков прошло успешно");
                 } else {
                     String pathId = query.replaceFirst("id=", "");
                     int id = parsePathId(pathId);
                     if (id != -1) {
                         taskManager.deleteEpicById(id);
-                        System.out.println("Задача с id " + id + " успешно удалена!");
+                        System.out.println("Эпик с id " + id + " успешно удален!");
                         httpExchange.sendResponseHeaders(200, 0);
                     } else {
                         System.out.println("Введен некорректный id" + pathId);

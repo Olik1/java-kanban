@@ -48,12 +48,16 @@ public class KVServer {
                     return;
                 }
                 String value = data.get(key);
-                if (value.isEmpty()) {
-                    System.out.println("Данные по ключу " + key + " отсутствуют!");
-                    exchange.sendResponseHeaders(400, 0);
-                    return;
+                if (value != null) {
+                    sendText(exchange, value);
+                } else {
+                    sendText(exchange, "[]");
                 }
-                sendText(exchange, value);
+//                if (value.isEmpty()) {
+//                    System.out.println("Данные по ключу " + key + " отсутствуют!");
+//                    exchange.sendResponseHeaders(400, 0);
+//                    return;
+//                }
                 System.out.println("Успешно отправлен запрос по ключу " + key);
                 exchange.sendResponseHeaders(200, 0);
             } else {

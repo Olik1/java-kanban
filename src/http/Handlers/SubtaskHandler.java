@@ -44,7 +44,7 @@ public class SubtaskHandler implements HttpHandler {
             case "GET": {
                 if (query == null) {
                     String response = gson.toJson(taskManager.getAllSubtasks());
-                    System.out.println("GET TASKS: " + response);
+                    System.out.println("GET SUBTASKS: " + response);
                     sendText(httpExchange, response);
                 } else {
                     String pathId = query.replaceFirst("id=", "");
@@ -62,17 +62,17 @@ public class SubtaskHandler implements HttpHandler {
             case "POST": {
                 String request = readText(httpExchange);
                 try {
-                    SubTask task = gson.fromJson(request, SubTask.class);
-                    int id = task.getId();
+                    SubTask subTask = gson.fromJson(request, SubTask.class);
+                    int id = subTask.getId();
                     if (taskManager.getSubTaskId(id) != null) {
-                        taskManager.updateSubtask(task);
+                        taskManager.updateSubtask(subTask);
                         httpExchange.sendResponseHeaders(200, 0);
-                        System.out.println("Успешное обновление задачи по id " + id);
+                        System.out.println("Успешное обновление подзадачи по id " + id);
                     } else {
-                        taskManager.addNewSubTask(task);
+                        taskManager.addNewSubTask(subTask);
                         httpExchange.sendResponseHeaders(200, 0);
-                        int taskId = task.getId();
-                        System.out.println("Задача успешно добавлена по айди" + taskId);
+                        int subTaskId = subTask.getId();
+                        System.out.println("Подзадача успешно добавлена по айди" + subTaskId);
                     }
                 } catch (JsonSyntaxException ex) {
                     httpExchange.sendResponseHeaders(400,0);
@@ -85,7 +85,7 @@ public class SubtaskHandler implements HttpHandler {
                     // если у нас нет уточнения по айди в строке запроса, то удаляем все
                     taskManager.clearAllSubtasks();
                     httpExchange.sendResponseHeaders(200, 0);
-                    System.out.println("Удаление всех задач прошло успешно");
+                    System.out.println("Удаление всех подзадач прошло успешно");
                 } else {
                     String pathId = query.replaceFirst("id=", "");
                     int id = parsePathId(pathId);
