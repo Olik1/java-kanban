@@ -7,13 +7,14 @@ import model.SubTask;
 import model.Task;
 import service.Managers;
 import service.impl.FileBackedTasksManager;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private  final KVTaskClient client;
+    private final KVTaskClient client;
     private final Gson gson;
 
     public HttpTaskManager(String url) throws IOException, InterruptedException {
@@ -48,34 +49,26 @@ public class HttpTaskManager extends FileBackedTasksManager {
         String history = client.load("history");
 
         //Десериализуем из Gson через TypeToken<T> и получаем правильный параметризованный тип
-        List<Task> tasks = gson.fromJson((taskJson), new TypeToken<ArrayList<Task>>(){}.getType());
+        List<Task> tasks = gson.fromJson((taskJson), new TypeToken<ArrayList<Task>>() {}.getType());
         if (tasks != null) {
-            for (Task task : tasks) {
-                this.tasks.put(task.getId(), task);
-                priorityTasks.add(task);
-            }
+            tasks.forEach(this::addNewTask);
         }
-        List<Epic> epics = gson.fromJson((epicJson), new TypeToken<ArrayList<Epic>>(){}.getType());
+        List<Epic> epics = gson.fromJson((epicJson), new TypeToken<ArrayList<Epic>>() {}.getType());
         if (epics != null) {
-            for (Epic epic : epics) {
-                this.epics.put(epic.getId(), epic);
-            }
+            epics.forEach(this::addNewEpic);
         }
-        List<SubTask> subTasks = gson.fromJson((subTaskJson), new TypeToken<ArrayList<SubTask>>(){}.getType());
+        List<SubTask> subTasks = gson.fromJson((subTaskJson), new TypeToken<ArrayList<SubTask>>() {}.getType());
         if (subTasks != null) {
-            for (SubTask subTask : subTasks) {
-                this.subTasks.put(subTask.getId(), subTask);
-                priorityTasks.add(subTask);
-            }
+            subTasks.forEach(this::addNewSubTask);
         }
-        List<Integer> historyMemory = gson.fromJson((history), new TypeToken<ArrayList<Integer>>(){}.getType());
+        List<Integer> historyMemory = gson.fromJson((history), new TypeToken<ArrayList<Integer>>() {}.getType());
         for (Integer id : historyMemory) {
             if (this.tasks.containsKey(id)) {
-                historyMemory.add(tasks.get(id).getId());
+                getTaskId(id);
             } else if (this.epics.containsKey(id)) {
-                historyMemory.add(epics.get(id).getId());
+                getEpicId(id);
             } else if (this.subTasks.containsKey(id)) {
-                historyMemory.add(epics.get(id).getId());
+                getSubTaskId(id);
             }
         }
 
