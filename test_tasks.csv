@@ -1,4 +1,2 @@
 id,type,name,status,description,duration,startTime,endTime,epicId
-1,TASK,Дописать тест,NEW,Проверить перед отправкой,30,2022-03-03T23:31,
-2,TASK,Запустить тест,NEW,Проверить результат,30,2022-03-04T01:31,
 

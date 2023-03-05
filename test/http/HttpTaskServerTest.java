@@ -63,13 +63,6 @@ class HttpTaskServerTest {
         taskManager.addNewSubTask(subTask1);
         taskManager.addNewSubTask(subTask2);
     }
-    private void createForHistoryTasks() {
-        LocalDateTime time = createDate(2022, 3, 3, 23, 31);
-        task1 = new Task("Дописать тест", Status.NEW, "Проверить перед отправкой", 30,
-                time);
-        task2 = new Task("Запустить тест", Status.NEW, "Проверить результат", 30,
-                time.plusHours(2));
-    }
 
     @BeforeAll
     static void start() throws IOException {
