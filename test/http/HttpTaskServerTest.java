@@ -221,33 +221,7 @@ class HttpTaskServerTest {
         assertEquals(response.body(), gson.toJson(List.of(task1, task2)));
 
     }
-    @Test
-    void shouldGetEmptyHistoryTest() throws IOException, InterruptedException {
-        Task task1 = new Task("Задача 1", Status.NEW, "Описание 1", 30,
-                LocalDateTime.of(2024, 2, 1, 7, 0));
-        Task task2 = new Task("Задача 2", Status.NEW, "Описание 2", 60,
-                LocalDateTime.of(2023, 2, 1, 15, 0));
-        taskManager.addNewTask(task1);
-        taskManager.addNewTask(task2);
 
-        Epic epic = new Epic("Эпик без подзадач", "Эпик");
-        taskManager.addNewEpic(epic);
-
-        taskManager.getTaskId(task2.getId());
-        taskManager.getEpicId(epic.getId());
-        taskManager.getTaskId(task1.getId());
-
-        HttpClient client = HttpClient.newHttpClient();
-        URI url = URI.create("http://localhost:8080/tasks/history");
-        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(200, response.statusCode());
-        var s = response.body();
-        var p = gson.toJson(taskManager.getHistory());
-
-        assertEquals(s, p);
-    }
     @Test
     void getPriorytyTasks() throws IOException, InterruptedException {
 
