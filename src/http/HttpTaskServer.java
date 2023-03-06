@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 
 public class HttpTaskServer {
-    private final int PORT = 8080;
+    private final static int PORT = 8080;
     private TaskManager taskManager;
     private HttpServer httpServer;
     private Gson gson;

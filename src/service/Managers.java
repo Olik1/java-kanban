@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import http.HttpTaskManager;
 import http.KVServer;
-import http.LocalDateTimeAdater;
+import http.LocalDateTimeAdapter;
 import service.impl.FileBackedTasksManager;
 import service.impl.InMemoryHistoryManager;
-import service.impl.InMemoryTaskManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class Managers {
 
     public static Gson getGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdater());
+        gsonBuilder.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter());
         return gsonBuilder.setPrettyPrinting().create();
     }
 }

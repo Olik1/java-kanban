@@ -22,16 +22,13 @@ public class HttpTaskManager extends FileBackedTasksManager {
         super(url);
         try {
             client = new KVTaskClient(url);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
         gson = Managers.getGson();
 
     }
 
-    //void put(String key, String json) POJO to Json -> toJson(Object obj)
     //переопределенный save() — сериализуем и отправляем через KV client на сервер вместо записи в файл
     @Override
     public void save() {
@@ -85,15 +82,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
                     break;
             }
         });
-//        for (Integer id : historyMemory) {
-//            if (this.tasks.containsKey(id)) {
-//                super.getTaskId(id);
-//            } else if (this.epics.containsKey(id)) {
-//                super.getEpicId(id);
-//            } else if (this.subTasks.containsKey(id)) {
-//                super.getSubTaskId(id);
-//            }
-//        }
 
     }
 
