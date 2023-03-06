@@ -36,7 +36,6 @@ class HttpTaskServerTest {
     Epic epic2;
     Epic epic3;
     SubTask subTask1;
-    SubTask subTask2;
 
     LocalDateTime createDate(int year, int month, int day, int hours, int minutes) {
         return LocalDateTime.of(year, month, day, hours, minutes, 0);
@@ -48,12 +47,10 @@ class HttpTaskServerTest {
                 time);
         task2 = new Task("Запустить тест", Status.NEW, "Проверить результат", 30,
                 time.plusHours(2));
-        epic1 = new Epic("Обрести свой путь в жизни", "Обязательно выполнить!");
-        epic2 = new Epic("Купить дом", "С видом на море");
-        epic3 = new Epic("Double epic", "double check!");
+        epic1 = new Epic("Пустой эпик без сабтасок", "check");
+        epic2 = new Epic("Эпик с сабтасками", "check");
+        epic3 = new Epic("Пустой эпик без сабтасок", "double check!");
         subTask1 = new SubTask("Подзадача - пройти обучение", Status.NEW, "закончить спринт",
-                10, time.plusHours(3), epic2.getId());
-        subTask2 = new SubTask("Подзадача - проверить знания", Status.NEW, "повторить конспект",
                 10, time.plusHours(3), epic2.getId());
         taskManager.addNewTask(task1);
         taskManager.addNewTask(task2);
@@ -61,7 +58,6 @@ class HttpTaskServerTest {
         taskManager.addNewEpic(epic2);
         taskManager.addNewEpic(epic3);
         taskManager.addNewSubTask(subTask1);
-        taskManager.addNewSubTask(subTask2);
     }
 
     @BeforeAll
@@ -73,7 +69,7 @@ class HttpTaskServerTest {
 
     @BeforeEach
     void setUp() throws IOException, InterruptedException {
-        taskManager = Managers.getHttpDefault();
+        taskManager = Managers.getTaskManagerDefault();
         httpTaskServer = new HttpTaskServer();
         createTasks();
         httpTaskServer.start();
@@ -157,6 +153,14 @@ class HttpTaskServerTest {
         HttpRequest request1 = HttpRequest.newBuilder().POST(bodyJson1).uri(uri).build();
         HttpRequest request2 = HttpRequest.newBuilder().POST(bodyJson2).uri(uri).build();
 
+        //вставить Post Сабтаска
+        URI uriSubtask = URI.create(SUBTASK_PATH);
+        String subtaskJson = gson.toJson(subTask1);
+        HttpRequest.BodyPublisher subtaskBodyJson = HttpRequest.BodyPublishers.ofString(subtaskJson);
+        HttpRequest requestSubtask = HttpRequest.newBuilder().POST(subtaskBodyJson).uri(uriSubtask).build();
+        HttpResponse<String> responseSubtask = client.send(requestSubtask, HttpResponse.BodyHandlers.ofString());
+        //
+
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
 
@@ -188,7 +192,6 @@ class HttpTaskServerTest {
         HttpRequest request1 = HttpRequest.newBuilder().POST(bodyJson1).uri(uri).build();
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response1.statusCode());
-        System.out.println(subTask1.getEpicId());
     }
     @Test
     void deleteSubtaskByIdTest() throws IOException, InterruptedException {
@@ -240,7 +243,10 @@ class HttpTaskServerTest {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
-        assertEquals(response.body(), gson.toJson(taskManager.getHistory()));
+        var s = response.body();
+        var p = gson.toJson(taskManager.getHistory());
+
+        assertEquals(s, p);
     }
     @Test
     void getPriorytyTasks() throws IOException, InterruptedException {
