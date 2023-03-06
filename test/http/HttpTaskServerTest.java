@@ -92,16 +92,22 @@ class HttpTaskServerTest {
 
     @Test
     void postTaskTest() throws IOException, InterruptedException {
+
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create(TASK_PATH);
+
         String taskJson1 = gson.toJson(task1);
         String taskJson2 = gson.toJson(task2);
+
         HttpRequest.BodyPublisher bodyJson1 = HttpRequest.BodyPublishers.ofString(taskJson1);
         HttpRequest.BodyPublisher bodyJson2 = HttpRequest.BodyPublishers.ofString(taskJson2);
+
         HttpRequest request1 = HttpRequest.newBuilder().POST(bodyJson1).uri(uri).build();
         HttpRequest request2 = HttpRequest.newBuilder().POST(bodyJson2).uri(uri).build();
+
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+
         assertEquals(200, response1.statusCode());
         assertEquals(200, response2.statusCode());
 
@@ -143,7 +149,7 @@ class HttpTaskServerTest {
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create(EPIC_PATH);
         String epicJson1 = gson.toJson(epic1);
-        String epicJson2 = gson.toJson(epic3);
+        String epicJson2 = gson.toJson(epic2);
 
         HttpRequest.BodyPublisher bodyJson1 = HttpRequest.BodyPublishers.ofString(epicJson1);
         HttpRequest.BodyPublisher bodyJson2 = HttpRequest.BodyPublishers.ofString(epicJson2);
@@ -214,10 +220,10 @@ class HttpTaskServerTest {
     }
     @Test
     void shouldGetEmptyHistoryTest() throws IOException, InterruptedException {
-        Task task1 = new Task("Задача 1", Status.NEW, "Описание 1", 60,
-                LocalDateTime.of(2024, 2, 1, 15, 00));
+        Task task1 = new Task("Задача 1", Status.NEW, "Описание 1", 30,
+                LocalDateTime.of(2024, 2, 1, 7, 0));
         Task task2 = new Task("Задача 2", Status.NEW, "Описание 2", 60,
-                LocalDateTime.of(2023, 2, 1, 15, 00));
+                LocalDateTime.of(2023, 2, 1, 15, 0));
         taskManager.addNewTask(task1);
         taskManager.addNewTask(task2);
 
@@ -235,6 +241,18 @@ class HttpTaskServerTest {
 
         assertEquals(200, response.statusCode());
         assertEquals(response.body(), gson.toJson(taskManager.getHistory()));
+    }
+    @Test
+    void getPriorytyTasks() throws IOException, InterruptedException {
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create(PRIORITY_TASK_PATH);
+        HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(200, response.statusCode());
+        assertEquals(response.body(), gson.toJson(taskManager.getPrioritizedTasks()));
+
     }
 
 }

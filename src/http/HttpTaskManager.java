@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import model.TaskType;
 import service.Managers;
 import service.impl.FileBackedTasksManager;
 
@@ -54,23 +55,39 @@ public class HttpTaskManager extends FileBackedTasksManager {
             tasks.forEach(this::addNewTask);
         }
         List<Epic> epics = gson.fromJson((epicJson), new TypeToken<ArrayList<Epic>>() {}.getType());
-        if (epics != null) {
-            epics.forEach(this::addNewEpic);
+        if (epics != null) { //сначала тащим эпик без подзадач, затем подзадачи
+            epics.forEach((epic) -> {
+                epic.removeSubTask();
+                super.addNewEpic(epic);
+            });
         }
         List<SubTask> subTasks = gson.fromJson((subTaskJson), new TypeToken<ArrayList<SubTask>>() {}.getType());
         if (subTasks != null) {
             subTasks.forEach(this::addNewSubTask);
         }
         List<Integer> historyMemory = gson.fromJson((history), new TypeToken<ArrayList<Integer>>() {}.getType());
-        for (Integer id : historyMemory) {
-            if (this.tasks.containsKey(id)) {
-                getTaskId(id);
-            } else if (this.epics.containsKey(id)) {
-                getEpicId(id);
-            } else if (this.subTasks.containsKey(id)) {
-                getSubTaskId(id);
+        historyMemory.forEach((task) -> {
+            switch (TaskType.valueOf(task.getClass().getSimpleName().toUpperCase())) {
+                case TASK:
+                    super.getTaskId(task);
+                    break;
+                case EPIC:
+                    super.getEpicId(task);
+                    break;
+                case SUBTASK:
+                    super.getSubTaskId(task);
+                    break;
             }
-        }
+        });
+//        for (Integer id : historyMemory) {
+//            if (this.tasks.containsKey(id)) {
+//                super.getTaskId(id);
+//            } else if (this.epics.containsKey(id)) {
+//                super.getEpicId(id);
+//            } else if (this.subTasks.containsKey(id)) {
+//                super.getSubTaskId(id);
+//            }
+//        }
 
     }
 
