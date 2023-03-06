@@ -187,12 +187,32 @@ class HttpTaskServerTest {
     void postSubtaskTest() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         URI uri = URI.create(SUBTASK_PATH);
-        String epicJson = gson.toJson(subTask1);
-        HttpRequest.BodyPublisher bodyJson1 = HttpRequest.BodyPublishers.ofString(epicJson);
+        String subtaskJson = gson.toJson(subTask1);
+        HttpRequest.BodyPublisher bodyJson1 = HttpRequest.BodyPublishers.ofString(subtaskJson);
         HttpRequest request1 = HttpRequest.newBuilder().POST(bodyJson1).uri(uri).build();
         HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, response1.statusCode());
     }
+    @Test
+    void getSubtaskResponseTest() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI uri = URI.create(SUBTASK_PATH);
+        taskManager.getSubTaskId(subTask1.getId());
+        HttpRequest request = HttpRequest.newBuilder().GET().uri(uri).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+        assertNotNull(response.body());
+
+    }
+    @Test
+    void deleteAllSubtaskTest() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI uri = URI.create(SUBTASK_PATH);
+        HttpRequest request = HttpRequest.newBuilder().DELETE().uri(uri).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+    }
+
     @Test
     void deleteSubtaskByIdTest() throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
